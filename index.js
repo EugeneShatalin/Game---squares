@@ -1,17 +1,24 @@
-let $start = document.querySelector('#start');
-let $game = document.querySelector('#game');
-let $time = document.querySelector('#time');
+let $start = document.querySelector('#start')
+let $game = document.querySelector('#game')
+let $time = document.querySelector('#time')
+let $result = document.querySelector('#result')
+let $timeHeader = document.querySelector('#time-header')
+let $resultHeader = document.querySelector('#result-header')
 
 let score = 0 //для хранения подсчета кливов по квадрату
 let isGameStarted = false //переменая фиксирующая начало и оконцание игры
 
-$start.addEventListener('click', startGame); //добавляем действие на клик по кнопке "Начать"
+$start.addEventListener('click', startGame)//добавляем действие на клик по кнопке "Начать"
 $game.addEventListener('click', handleBoxClick) //добавляем действие на клик в div(игровое поле)
 
 function startGame() { //функция запуска игры
+    setGameTime()
+    score = 0
+    $timeHeader.classList.remove('hide')
+    $resultHeader.classList.add('hide')
     isGameStarted = true
-    $start.classList.add('hide'); //спрятал кнопку "Начать", добавляя класс hide
-    $game.style.background = '#fff'; //устанавливил игровому полю белый цвет
+    $start.classList.add('hide') //спрятал кнопку "Начать", добавляя класс hide
+    $game.style.background = '#fff' //устанавливил игровому полю белый цвет
 
     let interval = setInterval(function() { //setInterval - функция js создает интервал, принимающая первым параметров функцию,
                                                     // а вторым временной интервал повторения
@@ -29,8 +36,23 @@ function startGame() { //функция запуска игры
     renderBox() //генерируем квадрат
 }
 
+function setGameScore() {
+    $result.textContent = score.toString()
+}
+
+function setGameTime() {
+    let time = 5
+    $time.textContent = time.toFixed(1)
+}
+
 function endGame() { //фукция остановки игры
     isGameStarted = false
+    setGameScore()
+    $start.classList.remove('hide')
+    $game.innerHTML = '' //innerHTML получает или устанавливает разметку дочерних элементов
+    $game.style.backgroundColor = '#ccc'
+    $timeHeader.classList.add('hide')
+    $resultHeader.classList.remove('hide')
 }
 
 function handleBoxClick(event) { //функция отслеживания кликов по div(квадрат)
