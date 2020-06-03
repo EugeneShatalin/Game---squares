@@ -1,19 +1,42 @@
 let $start = document.querySelector('#start');
 let $game = document.querySelector('#game');
+let $time = document.querySelector('#time');
 
 let score = 0 //для хранения подсчета кливов по квадрату
+let isGameStarted = false //переменая фиксирующая начало и оконцание игры
 
 $start.addEventListener('click', startGame); //добавляем действие на клик по кнопке "Начать"
 $game.addEventListener('click', handleBoxClick) //добавляем действие на клик в div(игровое поле)
 
 function startGame() { //функция запуска игры
+    isGameStarted = true
     $start.classList.add('hide'); //спрятал кнопку "Начать", добавляя класс hide
     $game.style.background = '#fff'; //устанавливил игровому полю белый цвет
+
+    let interval = setInterval(function() { //setInterval - функция js создает интервал, принимающая первым параметров функцию,
+                                                    // а вторым временной интервал повторения
+        let time = parseFloat($time.textContent) //распарсил строковое значение числа в числовое
+
+        if (time <= 0) {
+            clearInterval(interval) //clearInterval - функция js останавливающая интервал
+            endGame()
+        } else {
+            $time.textContent = (time - 0.1).toFixed(1) //toFixed - функция указывающая
+                                                                    // количество символов после запятой у числа
+        }
+    }, 100)
 
     renderBox() //генерируем квадрат
 }
 
+function endGame() { //фукция остановки игры
+    isGameStarted = false
+}
+
 function handleBoxClick(event) { //функция отслеживания кликов по div(квадрат)
+    if(!isGameStarted) { //если игра остановлена, не возможен клик по квадрату
+        return
+    }
     if (event.target.dataset.box) {//если в обьекте dataset присутствует ключ box,
                                     // значит клик произошел по div(квадрат)
         renderBox() //генерируем квадрат
