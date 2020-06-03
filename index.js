@@ -4,24 +4,33 @@ let $time = document.querySelector('#time')
 let $result = document.querySelector('#result')
 let $timeHeader = document.querySelector('#time-header')
 let $resultHeader = document.querySelector('#result-header')
+let $gameTime = document.querySelector('#game-time')
 
 let score = 0 //для хранения подсчета кливов по квадрату
 let isGameStarted = false //переменая фиксирующая начало и оконцание игры
 
 $start.addEventListener('click', startGame)//добавляем действие на клик по кнопке "Начать"
 $game.addEventListener('click', handleBoxClick) //добавляем действие на клик в div(игровое поле)
+$gameTime.addEventListener('input', setGameTime)//добавляем действие на ввод в input
+
+function show($el) {
+    $el.classList.remove('hide')
+}
+
+function hide($el) {
+    $el.classList.add('hide')
+}
 
 function startGame() { //функция запуска игры
     setGameTime()
     score = 0
-    $timeHeader.classList.remove('hide')
-    $resultHeader.classList.add('hide')
+    $gameTime.setAttribute('disabled', 'true') //блокируем input от ввода добавляя атрибут (disabled = "true")
     isGameStarted = true
-    $start.classList.add('hide') //спрятал кнопку "Начать", добавляя класс hide
+    hide($start) //спрятал кнопку "Начать", добавляя класс hide
     $game.style.background = '#fff' //устанавливил игровому полю белый цвет
 
-    let interval = setInterval(function() { //setInterval - функция js создает интервал, принимающая первым параметров функцию,
-                                                    // а вторым временной интервал повторения
+    let interval = setInterval(function () { //setInterval - функция js создает интервал, принимающая первым параметров функцию,
+        // а вторым временной интервал повторения
         let time = parseFloat($time.textContent) //распарсил строковое значение числа в числовое
 
         if (time <= 0) {
@@ -29,7 +38,7 @@ function startGame() { //функция запуска игры
             endGame()
         } else {
             $time.textContent = (time - 0.1).toFixed(1) //toFixed - функция указывающая
-                                                                    // количество символов после запятой у числа
+            // количество символов после запятой у числа
         }
     }, 100)
 
@@ -41,26 +50,29 @@ function setGameScore() {
 }
 
 function setGameTime() {
-    let time = 5
+    let time = +$gameTime.value
     $time.textContent = time.toFixed(1)
+    show($timeHeader)
+    hide($resultHeader)
 }
 
 function endGame() { //фукция остановки игры
+    $gameTime.removeAttribute('disabled') //разблокируем input для ввода удоляя атрибут disabled
     isGameStarted = false
     setGameScore()
-    $start.classList.remove('hide')
+    show($start)
     $game.innerHTML = '' //innerHTML получает или устанавливает разметку дочерних элементов
     $game.style.backgroundColor = '#ccc'
-    $timeHeader.classList.add('hide')
-    $resultHeader.classList.remove('hide')
+    hide($timeHeader)
+    show($resultHeader)
 }
 
 function handleBoxClick(event) { //функция отслеживания кликов по div(квадрат)
-    if(!isGameStarted) { //если игра остановлена, не возможен клик по квадрату
+    if (!isGameStarted) { //если игра остановлена, не возможен клик по квадрату
         return
     }
     if (event.target.dataset.box) {//если в обьекте dataset присутствует ключ box,
-                                    // значит клик произошел по div(квадрат)
+        // значит клик произошел по div(квадрат)
         renderBox() //генерируем квадрат
         score++
     }
